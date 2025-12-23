@@ -859,4 +859,3 @@ async def process_clear_completed(callback: types.CallbackQuery):
         for reminder_id in reminder_ids_to_remove:
             try:
                 scheduler.remove_job(reminder_id)
-           
