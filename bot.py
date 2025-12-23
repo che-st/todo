@@ -849,3 +849,37 @@ async def process_clear_completed(callback: types.CallbackQuery):
         initial_count = len(tasks_storage[user_id])
         tasks_storage[user_id] = [task for task in tasks_storage[user_id] if not task['completed']]
         removed_count = initial_count - len(tasks_storage[user_id])
+
+# В начале файла импортируем необходимые модули
+from database.database import create_tables, async_session
+from database.crud import get_or_create_user, create_task, get_user_tasks
+
+# При старте бота создаем таблицы
+async def on_startup():
+    await create_tables()
+    print("База данных инициализирована")
+
+# Пример обновленной команды /start
+@dp.message(Command("start"))
+async def cmd_start(message: types.Message):
+    user_id = message.from_user.id
+    username = message.from_user.username
+    full_name = message.from_user.full_name
+    
+    async with async_session() as session:
+        # Создаем или получаем пользователя
+        user = await get_or_create_user(
+            session=session,
+            user_id=user_id,
+            username=username,
+            full_name=full_name
+        )
+    
+    welcome_text = (
+        "📝 *To-Do List Bot с базой данных*\n\n"
+        f"Привет, {user.full_name or 'пользователь'}!\n"
+        f"Ваш ID: {user.id}\n"
+        f"Дата регистрации: {user.created_at.strftime('%d.%m.%Y')}"
+    )
+    
+    await message.answer(welcome_text, parse_mode="Markdown")
