@@ -4,8 +4,8 @@ import os
 import re
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.date import DateTrigger
+from asyncio import AsyncIOScheduler
+import DateTrigger
 
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
