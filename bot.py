@@ -849,13 +849,3 @@ async def process_clear_completed(callback: types.CallbackQuery):
         initial_count = len(tasks_storage[user_id])
         tasks_storage[user_id] = [task for task in tasks_storage[user_id] if not task['completed']]
         removed_count = initial_count - len(tasks_storage[user_id])
-        
-        # Удаляем напоминания для удаленных задач
-        reminder_ids_to_remove = []
-        for reminder_id, reminder in list(reminders_storage.items()):
-            if reminder['user_id'] == user_id and reminder['task_index'] >= len(tasks_storage[user_id]):
-                reminder_ids_to_remove.append(reminder_id)
-        
-        for reminder_id in reminder_ids_to_remove:
-            try:
-                scheduler.remove_job(reminder_id)
